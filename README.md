@@ -1,6 +1,6 @@
 ![MinxBot Logo](https://cdn.discordapp.com/attachments/1342010690147450890/1342952650525638716/Minx.jpg?ex=67bb819e&is=67ba301e&hm=ac0677efdf1cd80390085224bc783113cbd3228ec12d52451c58f2dc627fabf4&)
 
-# MinxBot 🤖
+# MinxBot
 
 MinxBot is a **Discord bot** built using [Discord.js](https://discord.js.org/) that provides **fun interactions, voice channel event tracking, and custom word triggers**. It's modular and easy to maintain, supporting both **prefix commands** and **slash commands**.
 
