@@ -1,4 +1,4 @@
-![MinxBot Logo]([https://your-image-url.com/logo.png](https://tenor.com/view/justaminx-chips-deadpan-gamer-eating-chips-gif-5303161221988315182))
+![MinxBot Logo]([(https://tenor.com/view/justaminx-chips-deadpan-gamer-eating-chips-gif-5303161221988315182])
 
 # MinxBot
 
