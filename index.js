@@ -15,6 +15,13 @@ const {
     sidewinderId 
 } = require('./config.json');
 
+const { 
+    joinVoiceChannel, 
+    createAudioPlayer, 
+    createAudioResource, 
+    AudioPlayerStatus 
+} = require('@discordjs/voice');
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -80,23 +87,64 @@ client.on('messageCreate', async message => {
     }
 });
 
-// 🔹 Word Triggers (Map Messages to Responses)
-const wordResponses = {
-    "minx": `Did someone call me? 👀`,
-    "eat chips": `Yes sir!\n${chipGifUrl}`,
-    "furry": `No furries allowed! 😠`,
-    "furries": `No furries allowed! 😠`
-};
-
+// 🔹 Word Triggers (Minx Always Replies When Mentioned)
 client.on('messageCreate', async message => {
     if (message.author.bot) return;
+
     const content = message.content.toLowerCase().trim();
 
-    for (const [trigger, response] of Object.entries(wordResponses)) {
-        if (content.includes(trigger)) {
-            console.log(`Detected "${trigger}" in message: ${message.content}`);
-            return await message.reply(response);
-        }
+    if (content.includes("minx")) {
+        console.log(`Detected "minx" in: ${message.content}`);
+        return await message.reply(`Did someone call me? 👀`);
+    }
+});
+
+// 🔹 Handle Message-Based Audio Triggers (VC Join & Play Sounds)
+client.on('messageCreate', async message => {
+    if (message.author.bot) return;
+
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) return; // Ignore if user is not in VC
+
+    let soundFile = null;
+
+    // Check for specific trigger messages
+    if (message.content.toLowerCase() === "say hello minx") {
+        soundFile = "hello.mp3";
+    } else if (message.content.toLowerCase() === "!lonely") {
+        soundFile = "flirt.mp3";
+    }
+
+    if (!soundFile) return; // If no valid sound trigger, ignore
+
+    const filePath = path.join(__dirname, 'sounds/', soundFile);
+    if (!fs.existsSync(filePath)) return message.reply("❌ **Audio file not found!**");
+
+    try {
+        // Join the voice channel
+        const connection = joinVoiceChannel({
+            channelId: voiceChannel.id,
+            guildId: message.guild.id,
+            adapterCreator: message.guild.voiceAdapterCreator,
+        });
+
+        // Create an audio player and play the file
+        const player = createAudioPlayer();
+        const resource = createAudioResource(filePath);
+
+        player.play(resource);
+        connection.subscribe(player);
+
+        // Auto-disconnect after the audio finishes playing
+        // player.on(AudioPlayerStatus.Idle, () => {
+        //     connection.destroy();
+        //     console.log(`✅ Finished playing ${soundFile} & left VC.`);
+        // });
+
+        //message.reply(`🎶 **Playing** \`${soundFile}\`!`);
+    } catch (error) {
+        console.error("Voice Error:", error);
+        message.reply("❌ **Failed to play audio!**");
     }
 });
 
@@ -137,3 +185,4 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 // 🔹 Start the Bot
 client.login(token);
+
