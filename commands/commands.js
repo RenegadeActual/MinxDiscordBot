@@ -1,22 +1,25 @@
+const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const path = require('path');
 
 module.exports = {
     name: "commands",
-    description: "Lists all available commands for MinxBot with descriptions.",
+    description: "Lists all available commands.",
     execute: async (message) => {
-        // Load all commands
-        const commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.js'));
-        let commandList = "**Available Commands:**\n\n";
+        const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-        for (const file of commandFiles) {
+        // Generate command list dynamically
+        const commandList = commandFiles.map(file => {
             const command = require(`./${file}`);
-            if (command.name && command.description) {
-                commandList += `**!${command.name}** - ${command.description}\n`;
-            }
-        }
+            return { name: `!${command.name}`, value: command.description || "No description provided.", inline: false };
+        });
 
-        // Send the list
-        await message.reply(commandList);
+        const embed = new EmbedBuilder()
+            .setTitle("📜 MinxBot Command List")
+            .setDescription("Here's everything I can do:")
+            .setColor(0xff66cc) // Pinkish Minx Theme
+            .addFields(commandList)
+            .setFooter({ text: "More features coming soon!", iconURL: message.client.user.displayAvatarURL() });
+
+        await message.reply({ embeds: [embed] });
     }
 };

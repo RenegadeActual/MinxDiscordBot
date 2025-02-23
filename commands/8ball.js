@@ -1,3 +1,5 @@
+const { EmbedBuilder } = require('discord.js');
+
 module.exports = {
     name: "8ball",
     description: "Ask Minx a question, and she'll predict your future.",
@@ -13,6 +15,14 @@ module.exports = {
         ];
 
         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        await message.reply(`🎱 **Minx's 8ball says:** ${randomResponse}`);
+
+        const embed = new EmbedBuilder()
+            .setTitle("🎱 Minx's 8ball Prediction")
+            .setDescription(`**Question:** ${message.content.slice(7).trim() || "No question given?"}`)
+            .setColor(0x9933ff) // Purple Theme
+            .addFields({ name: "Minx Says:", value: randomResponse })
+            .setFooter({ text: "Use !8ball again if you dare.", iconURL: message.client.user.displayAvatarURL() });
+
+        await message.reply({ embeds: [embed] }).catch(console.error);
     }
 };

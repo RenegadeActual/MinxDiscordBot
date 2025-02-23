@@ -76,8 +76,20 @@ module.exports = {
 
         // ✅ Automatically roast users who mention "lonely"
         if (content.includes("lonely")) {
-            return message.reply("LONELY?? Bro, have you **considered touching grass** or are you just gonna cry in chat again?");
-        }
+            const lonelyResponses = [
+                "LONELY?? Bro, have you **considered touching grass** or are you just gonna cry in chat again?",
+                "Oh, you’re lonely? Have you tried talking to a **real** person? No? Thought so.",
+                "LONELY? Go outside, make a friend, and maybe—just maybe—you won’t need to tell a bot about it.",
+                "Damn, that's tragic. Have you considered adopting a cat? Or, you know, **self-improvement**?",
+                "MinxBot is not your therapist, buddy. But hey, at least you have me roasting you.",
+                "You're lonely? No surprise there, considering your social skills are at **NPC level**.",
+                "I’d say 'same,' but I actually have a life. Maybe you should get one too?"
+        ];
+
+    const randomResponse = lonelyResponses[Math.floor(Math.random() * lonelyResponses.length)];
+    return message.reply(randomResponse);
+}
+
 
         // ✅ Sarcastic Auto-Replies
         const sarcasticReplies = {
