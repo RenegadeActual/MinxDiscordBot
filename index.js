@@ -22,6 +22,11 @@ const {
     AudioPlayerStatus 
 } = require('@discordjs/voice');
 
+const ffmpeg = require('ffmpeg-static');
+process.env.FFMPEG_PATH = ffmpeg;
+console.log(`🔍 Using internal FFmpeg from: ${process.env.FFMPEG_PATH}`);
+
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,

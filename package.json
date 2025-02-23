@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "@discordjs/voice": "^0.18.0",
-    "discord.js": "^14.18.0"
+    "discord.js": "^14.18.0",
+    "ffmpeg-static": "^5.2.0"
   }
 }
