@@ -1,7 +1,11 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
-    name: "simprate",
-    description: "Minx will judge how much of a simp you are today.",
-    execute: async (message) => {
+    data: new SlashCommandBuilder()
+        .setName('simprate')
+        .setDescription("Minx will judge how much of a simp you are today."),
+
+    async execute(interaction) {
         const simprate = Math.floor(Math.random() * 101); // 0 - 100%
         let comment;
 
@@ -15,6 +19,6 @@ module.exports = {
             comment = "100% SIMP ALERT 🚨. Do you even have self-respect?";
         }
 
-        await message.reply(`❤️ **Simprate:** ${simprate}% - ${comment}`);
+        await interaction.reply(`❤️ **Simprate:** ${simprate}% - ${comment}`);
     }
 };

@@ -1,7 +1,11 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
-    name: "furry",
-    description: "Admonishes users who mention furry.",
-    execute: async (message) => {
+    data: new SlashCommandBuilder()
+        .setName('furry')
+        .setDescription("MinxBot's reaction to furries."),
+
+    async execute(interaction) {
         const furryResponses = [
             "No furries allowed! 😠",
             "Ew, a furry? GET OUT. 🚪",
@@ -14,6 +18,6 @@ module.exports = {
         ];
 
         const randomResponse = furryResponses[Math.floor(Math.random() * furryResponses.length)];
-        await message.reply(randomResponse);
+        await interaction.reply(randomResponse);
     }
 };

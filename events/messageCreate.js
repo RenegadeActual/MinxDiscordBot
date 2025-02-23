@@ -1,4 +1,5 @@
 const fs = require('fs');
+const db = require('../database/db'); // Import the database handler
 
 const commands = new Map();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -32,11 +33,17 @@ function checkIdleMessages(client) {
     setTimeout(() => checkIdleMessages(client), 3600000); // Check every 1 hour
 }
 
+// BigChill Coins settings
+const COIN_REWARD = 5; // Amount earned per message
+const EARN_COOLDOWN = 60 * 1000; // 60-second cooldown
+
 module.exports = {
     name: 'messageCreate',
     async execute(message, client) {
         if (message.author.bot) return;
         const content = message.content.toLowerCase().trim();
+        const userId = message.author.id;
+        const username = message.author.username;
 
         // Update last message time
         lastMessageTime = Date.now();
@@ -84,12 +91,11 @@ module.exports = {
                 "MinxBot is not your therapist, buddy. But hey, at least you have me roasting you.",
                 "You're lonely? No surprise there, considering your social skills are at **NPC level**.",
                 "I’d say 'same,' but I actually have a life. Maybe you should get one too?"
-        ];
+            ];
 
-    const randomResponse = lonelyResponses[Math.floor(Math.random() * lonelyResponses.length)];
-    return message.reply(randomResponse);
-}
-
+            const randomResponse = lonelyResponses[Math.floor(Math.random() * lonelyResponses.length)];
+            return message.reply(randomResponse);
+        }
 
         // ✅ Sarcastic Auto-Replies
         const sarcasticReplies = {
@@ -102,6 +108,16 @@ module.exports = {
             if (content.includes(phrase)) {
                 return message.reply(sarcasticReplies[phrase]);
             }
+        }
+
+        // ✅ 🎉 BigChill Coins Earning System with Cooldown (Anti-Spam)
+        db.addUser(userId, username); // Ensure user is in database
+        const lastEarned = db.getLastEarned(userId);
+        const now = Date.now();
+
+        if (now - lastEarned >= EARN_COOLDOWN) {
+            db.updateUserBalance(userId, COIN_REWARD);
+            db.updateLastEarned(userId, now);
         }
     }
 };

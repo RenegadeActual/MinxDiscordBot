@@ -1,12 +1,14 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const csv = require('csv-parser');
 const moment = require('moment-timezone');
 
 module.exports = {
-    name: "nextgame",
-    description: "Displays the next scheduled Dodgers game.",
-    execute: async (message) => {
+    data: new SlashCommandBuilder()
+        .setName('nextgame')
+        .setDescription('Displays the next scheduled Dodgers game.'),
+
+    async execute(interaction) {
         const games = [];
 
         // Read the CSV file
@@ -29,13 +31,13 @@ module.exports = {
             })
             .on('end', async () => {
                 if (games.length === 0) {
-                    return message.reply("❌ No upcoming Dodgers games found.");
+                    return interaction.reply("❌ No upcoming Dodgers games found.");
                 }
 
                 // Find the next game
                 const nextGame = games.find(game => game.date.isAfter(moment()));
                 if (!nextGame) {
-                    return message.reply("❌ No upcoming Dodgers games scheduled.");
+                    return interaction.reply("❌ No upcoming Dodgers games scheduled.");
                 }
 
                 const userTimeZones = ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles"];
@@ -59,9 +61,9 @@ module.exports = {
                         { name: "🕰️ Game Time (Multiple Time Zones):", value: gameTimes.join("\n"), inline: false },
                         { name: "🔥 Minx Says:", value: minxHypeMessages[Math.floor(Math.random() * minxHypeMessages.length)], inline: false }
                     )
-                    .setFooter({ text: "Let's go Dodgers! 💙", iconURL: message.client.user.displayAvatarURL() });
+                    .setFooter({ text: "Let's go Dodgers! 💙", iconURL: interaction.client.user.displayAvatarURL() });
 
-                await message.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
             });
     }
 };

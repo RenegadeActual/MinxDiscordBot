@@ -1,9 +1,16 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: "8ball",
-    description: "Ask Minx a question, and she'll predict your future.",
-    execute: async (message) => {
+    data: new SlashCommandBuilder()
+        .setName('8ball')
+        .setDescription("Ask Minx a question, and she'll predict your future.")
+        .addStringOption(option =>
+            option.setName('question')
+                .setDescription('The question you want to ask Minx')
+                .setRequired(false)
+        ),
+
+    async execute(interaction) {
         const responses = [
             "Absolutely yes.",
             "No chance, loser.",
@@ -16,13 +23,15 @@ module.exports = {
 
         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
 
+        const question = interaction.options.getString('question') || "No question given?";
+
         const embed = new EmbedBuilder()
             .setTitle("🎱 Minx's 8ball Prediction")
-            .setDescription(`**Question:** ${message.content.slice(7).trim() || "No question given?"}`)
+            .setDescription(`**Question:** ${question}`)
             .setColor(0x9933ff) // Purple Theme
             .addFields({ name: "Minx Says:", value: randomResponse })
-            .setFooter({ text: "Use !8ball again if you dare.", iconURL: message.client.user.displayAvatarURL() });
+            .setFooter({ text: "Use /8ball again if you dare.", iconURL: interaction.client.user.displayAvatarURL() });
 
-        await message.reply({ embeds: [embed] }).catch(console.error);
+        await interaction.reply({ embeds: [embed] });
     }
 };

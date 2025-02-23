@@ -1,7 +1,11 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
-    name: "minx",
-    description: "Replies to a Minx check.",
-    execute: async (message) => {
-        await message.reply(`Hi ${message.author.username}, yes I am awake!`);
+    data: new SlashCommandBuilder()
+        .setName('minx')
+        .setDescription('Check to make sure Minx is awake.'),
+
+    async execute(interaction) {
+        await interaction.reply(`Hi ${interaction.user.username}, yes I am awake!`);
     }
 };
