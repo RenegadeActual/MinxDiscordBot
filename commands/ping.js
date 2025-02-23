@@ -1,6 +1,6 @@
 module.exports = {
     name: "ping",
-    description: "Replies with pong!",
+    description: "Replies with Pong!",
     execute: async (message) => {
         await message.reply("Pong!");
     }
