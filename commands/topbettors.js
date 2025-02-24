@@ -23,7 +23,7 @@ module.exports = {
             .setDescription(
                 topBettors
                     .map((user, index) => 
-                        `**${index + 1}.** ${user.username} - 🏅 **${user.total_wins} Wins** - 💰 **${user.total_payout} BCC Earned**`
+                        `**${index + 1}.** ${user.username} - 🏅 **${user.total_wins} Wins** - 💰 **${user.total_payout} CP Earned**`
                     )
                     .join("\n")
             )

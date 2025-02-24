@@ -53,7 +53,7 @@ module.exports = {
             const payout = Math.floor((wager.amount / totalWinningBet) * totalPool); // Distribute based on bet share
             db.updateUserBalance(wager.user_id, payout);
             db.updateUserStats(wager.user_id, payout); // Log bet victory and payout
-            payoutMessages.push(`💰 **${wager.username}** won **${payout} BCC**`);
+            payoutMessages.push(`💰 **${wager.username}** won **${payout} CP**`);
         });
 
         // Send an embed message announcing the results

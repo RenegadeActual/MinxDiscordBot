@@ -4,7 +4,7 @@ const db = require('../database/db');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('balance')
-        .setDescription('Check your BigChill Coin (BCC) balance.'),
+        .setDescription('Check your BigChill Coin (CP) balance.'),
 
     async execute(interaction) {
         // Ensure the user exists in the database
@@ -15,10 +15,10 @@ module.exports = {
 
         // Create an embedded response
         const embed = new EmbedBuilder()
-            .setTitle("💰 BigChill Coin Balance")
+            .setTitle("💰 Chill Points Balance")
             .setColor(0xFFD700) // Gold color
-            .setDescription(`You currently have **${balance} BCC**.`)
-            .setFooter({ text: "Earn BCC by chatting or betting smart!" });
+            .setDescription(`You currently have **${balance} CP**.`)
+            .setFooter({ text: "Earn CP by chatting or betting smart!" });
 
         await interaction.reply({ embeds: [embed] });
     }

@@ -11,24 +11,26 @@ module.exports = {
 
         if (!activeBets || activeBets.length === 0) {
             return interaction.reply({ 
-                content: "📭 There are no active bets right now. Start one with `/createbet`!", 
+                content: "📭 **There are no active bets right now.**\nYou can start a new bet using `/createbet`!",
                 ephemeral: true 
             });
         }
 
-        const userBets = [];
+        let userBets = [];
         const embed = new EmbedBuilder()
-            .setTitle("📊 **Active Bets & Odds**")
+            .setTitle("📊 **Active Bets & Your Wagers**")
             .setColor(0x1E90FF) // Dodger Blue
-            .setFooter({ text: "Use /placebet <bet_id> to place a bet!" });
+            .setFooter({ text: "Use /placebet <bet_id> to join a bet!" });
 
         activeBets.forEach(bet => {
             const wagers = db.getWagersForBet(bet.bet_id);
             const totalBet = bet.total_pool;
+
+            // Calculate total bets on each option
             const optionOneTotal = wagers.filter(w => w.option === bet.option_one).reduce((sum, w) => sum + w.amount, 0);
             const optionTwoTotal = wagers.filter(w => w.option === bet.option_two).reduce((sum, w) => sum + w.amount, 0);
 
-            // Calculate current odds
+            // Calculate odds
             const optionOneOdds = totalBet > 0 ? ((optionOneTotal / totalBet) * 100).toFixed(1) : "50.0";
             const optionTwoOdds = totalBet > 0 ? ((optionTwoTotal / totalBet) * 100).toFixed(1) : "50.0";
 
@@ -36,8 +38,8 @@ module.exports = {
             embed.addFields({
                 name: `🆔 **Bet #${bet.bet_id} - ${bet.description}**`,
                 value: `💰 **Total Pool:** ${totalBet} BCC\n\n` +
-                       `✅ **${bet.option_one}** - **${optionOneOdds}%** (${optionOneTotal} BCC)\n` +
-                       `❌ **${bet.option_two}** - **${optionTwoOdds}%** (${optionTwoTotal} BCC)`,
+                       `✅ **${bet.option_one}** - **${optionOneOdds}%** *(${optionOneTotal} CP bet)*\n` +
+                       `❌ **${bet.option_two}** - **${optionTwoOdds}%** *(${optionTwoTotal} CP bet)*\n\n`,
                 inline: false
             });
 
@@ -51,31 +53,21 @@ module.exports = {
 
                     const potentialPayout = (wager.amount * userOdds).toFixed(2);
 
-                    userBets.push(`🆔 Bet #${bet.bet_id} - **${bet.description}**\n` +
-                                  `📌 **Your Wager:** ${wager.amount} BCC on **${wager.option}**\n` +
-                                  `💸 **Locked-in Payout Rate:** ${userOdds} BCC\n` +
-                                  `🏆 **Potential Payout if you win:** ${potentialPayout} BCC`);
+                    userBets.push(`🆔 **Bet #${bet.bet_id} - ${bet.description}**\n` +
+                                  `📌 **Your Bet:** ${wager.amount} BCC on **${wager.option}**\n` +
+                                  `🔄 **Locked-in Payout Rate:** *${userOdds} CP per 1 CP bet*\n` +
+                                  `🏆 **Potential Payout:** ${potentialPayout} CP\n`);
                 });
             }
         });
 
-        // Send main public embed
-        await interaction.reply({ embeds: [embed] });
+        // Ensure user bet section is properly formatted and includes spacing
+        embed.addFields(
+            { name: '\u200B', value: '\u200B' }, // Adds a blank space before "Your Active Wagers"
+            { name: "🎯 **Your Active Wagers**", value: userBets.length > 0 ? userBets.join("\n\n") : "🔍 **You haven't placed any bets yet.**\nUse `/placebet <bet_id>` to participate!" },
+            { name: '\u200B', value: '\u200B' }  // Adds a blank space after "Your Active Wagers"
+        );
 
-        // Send private ephemeral message about the user's own bets
-        if (userBets.length > 0) {
-            const userEmbed = new EmbedBuilder()
-                .setTitle("🔎 **Your Active Bets**")
-                .setColor(0xFFD700) // Gold
-                .setDescription(userBets.join("\n\n"))
-                .setFooter({ text: "You can check back anytime with /betstatus" });
-
-            await interaction.followUp({ embeds: [userEmbed], ephemeral: true });
-        } else {
-            await interaction.followUp({ 
-                content: "🔍 You haven't placed any bets yet. Use `/placebet <bet_id>` to participate!", 
-                ephemeral: true 
-            });
-        }
+        await interaction.reply({ embeds: [embed], ephemeral: true });
     }
 };

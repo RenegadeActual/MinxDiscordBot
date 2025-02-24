@@ -15,7 +15,7 @@ module.exports = {
                 .setRequired(true))
         .addIntegerOption(option =>
             option.setName('amount')
-                .setDescription('Amount of BigChill Coins to wager')
+                .setDescription('Amount of Chill Coins to wager')
                 .setRequired(true)),
 
     async execute(interaction) {
@@ -40,7 +40,7 @@ module.exports = {
         // Check user balance
         const userBalance = db.getUserBalance(interaction.user.id);
         if (userBalance < amount) {
-            return interaction.reply({ content: "❌ You don't have enough BigChill Coins to place this bet!", ephemeral: true });
+            return interaction.reply({ content: "❌ You don't have enough Chill Point to place this bet!", ephemeral: true });
         }
 
         // Deduct amount and place wager
@@ -48,7 +48,7 @@ module.exports = {
         db.placeWager(betId, interaction.user.id, interaction.user.username, chosenOption, amount);
 
         return interaction.reply({
-            content: `✅ **${interaction.user.username}** placed a bet of **${amount} BCC** on **"${chosenOption}"** in Bet #${betId}.`
+            content: `✅ **${interaction.user.username}** placed a bet of **${amount} CP** on **"${chosenOption}"** in Bet #${betId}.`
         });
     }
 };

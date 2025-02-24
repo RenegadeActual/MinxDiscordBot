@@ -5,14 +5,14 @@ const { adminRoles } = require('../config.json');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('pay')
-        .setDescription('Admin command to add BigChill Coins to a user.')
+        .setDescription('Admin command to add Chill Points to a user.')
         .addUserOption(option => 
             option.setName('user')
-                .setDescription('The user to receive BigChill Coins')
+                .setDescription('The user to receive Chill Points')
                 .setRequired(true))
         .addIntegerOption(option => 
             option.setName('amount')
-                .setDescription('Amount of BCC to grant')
+                .setDescription('Amount of CP to grant')
                 .setRequired(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild), // Restrict usage to admin roles
 
@@ -41,9 +41,9 @@ module.exports = {
 
         // Create an embed notification
         const embed = new EmbedBuilder()
-            .setTitle("💰 BigChill Coins Awarded!")
+            .setTitle("💰 Chill Points Awarded!")
             .setColor(0xFFD700) // Gold color
-            .setDescription(`**${targetUser.username}** has received **${amount}** BigChill Coins!`)
+            .setDescription(`**${targetUser.username}** has received **${amount}** Chill Points!`)
             .setFooter({ text: "Use /balance to check your total.", iconURL: interaction.client.user.displayAvatarURL() });
 
         await interaction.reply({ embeds: [embed] });
